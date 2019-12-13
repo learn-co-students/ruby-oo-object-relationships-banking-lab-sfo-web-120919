@@ -1,72 +1,67 @@
-require 'pry'
-
+require "pry"
 
 class Transfer
-
   attr_reader :sender, :receiver, :amount
   attr_accessor :status
 
   @@all = []
 
   def initialize(sender, receiver, amount)
-    @sender = sender 
-    @receiver = receiver 
-    @amount = amount 
+    @sender = sender
+    @receiver = receiver
+    @amount = amount
     @status = "pending"
-    @@all << self 
+    @@all << self
     #binding.pry
   end
 
   def self.all
     @@all
-  end 
+  end
 
   def has_transaction?
-     # iterate through all of the Transaction instances in Transaction.all
-     Transfer.all.each do |t|
-       # check to see if the transaction has taken place
+    # iterate through all of the Transaction instances in Transaction.all
+    Transfer.all.each do |t|
+      # check to see if the transaction has taken place
       # binding.pry
-       if (t.receiver == @receiver && t.sender == @sender) && (@status != "complete")
-         return true
-      end 
+      if (t.receiver == @receiver && t.sender == @sender) && (@status != "complete")
+        # return true if pending transaction
+        return true
+      end
     end
-      return false
-  end 
+    return false
+  end
+
   def has_funds?
     @sender.balance >= @amount
   end
+
   def valid?
-      sender.valid? && receiver.valid?
-  end 
+    sender.valid? && receiver.valid?
+  end
 
   def execute_transaction
-     if valid? && has_transaction?
-      #binding.pry
-       if !has_funds?
-         #binding.pry
-         @status = "rejected"
-         return "Transaction rejected. Please check your account balance."
-       end 
-       #binding.pry
-       @sender.balance -= @amount
-       @receiver.deposit(@amount)
-       @status = "complete"
-       # returning here
-      else
+    if valid? && has_transaction? # both accounts are valid, connected, and the status is pending
+      if !has_funds? # no money, do rejected stuff, return to exit function with str value
         @status = "rejected"
         return "Transaction rejected. Please check your account balance."
-     end 
-     
-     end 
- 
-     def reverse_transfer
-         if @status == "complete"
-           # reverse transfer
-           @sender.deposit(@amount)
-           @receiver.balance -= @amount
-           @status = "reversed"
-         end 
-     end 
+      end
+      # complete the transaction
+      @sender.balance -= @amount
+      @receiver.deposit(@amount)
+      @status = "complete"
+    else # either its not value or there is no pending, connected transaction
+      @status = "rejected"
+      return "Transaction rejected. Please check your account balance."
+    end
+  end  # end execute_trans
 
-
+  def reverse_transfer
+    if @status == "complete"
+      # reverse transfer
+      @sender.deposit(@amount)
+      @receiver.balance -= @amount
+      @status = "reversed"
+    end
+  end
 end
