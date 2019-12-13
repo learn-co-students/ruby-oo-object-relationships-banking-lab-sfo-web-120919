@@ -41,19 +41,14 @@ class Transfer
   end
 
   def execute_transaction
-    if !has_funds?
+    if !has_funds? || !(valid? && has_transaction?)
       @status = "rejected"
       return "Transaction rejected. Please check your account balance."
-    elsif valid? && has_transaction?
+    else
       @sender.balance -= @amount
       @receiver.deposit(@amount)
       @status = "complete"
-      return
-    else
-      @status = "rejected"
-      return "Transaction rejected. Please check your account balance."
     end
-
     # if valid? && has_transaction? # both accounts are valid, connected, and the status is pending
     #   if !has_funds? # no money, do rejected stuff, return to exit function with str value
     #     @status = "rejected"
