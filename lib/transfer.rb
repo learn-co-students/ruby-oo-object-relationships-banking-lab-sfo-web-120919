@@ -49,20 +49,7 @@ class Transfer
       @receiver.deposit(@amount)
       @status = "complete"
     end
-    # if valid? && has_transaction? # both accounts are valid, connected, and the status is pending
-    #   if !has_funds? # no money, do rejected stuff, return to exit function with str value
-    #     @status = "rejected"
-    #     return "Transaction rejected. Please check your account balance."
-    #   end
-    #   # complete the transaction
-    #   @sender.balance -= @amount
-    #   @receiver.deposit(@amount)
-    #   @status = "complete"
-    # else # either its not value or there is no pending, connected transaction
-    #   @status = "rejected"
-    #   return "Transaction rejected. Please check your account balance."
-    # end
-  end  # end execute_trans
+  end
 
   def reverse_transfer
     if @status == "complete"
